@@ -47,17 +47,18 @@ void* consumer(void* arg) {
 
     while (1) {
         printf("[Consumer] Running consumer\n");
+        double ema = calculate_ema(cb, EMA_ALPHA);
+        printf("[Consumer] EMA: %.2f BPM\n", ema);
         int heart_rate;
         if (circular_buffer_remove_nonblock(cb, &heart_rate)) {
-            double ema = calculate_ema(cb, EMA_ALPHA);
-            printf("[Consumer] Consumed: %d BPM | EMA: %.2f BPM\n", heart_rate, ema);
+            printf("[Consumer] Consumed: %d BPM\n", heart_rate);
         } else {
             printf("[Consumer] Buffer is empty. Waiting for data.\n");
         }
         if (cb->size <= 20) {
             visualizeCircularBuffer(cb);
         }
-        sleep(1.5);
+        sleep(3);
     }
 
     return NULL;
