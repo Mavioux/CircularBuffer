@@ -34,6 +34,14 @@ TEST_F(CircularBufferTest, RemoveElementTest) {
     ASSERT_TRUE(circular_buffer_is_empty(cb));
 }
 
+TEST_F(CircularBufferTest, RemoveNonBlockingElementTest) {
+    circular_buffer_add(cb, 1);
+    int element;
+    ASSERT_TRUE(circular_buffer_remove_nonblock(cb, &element));
+    ASSERT_EQ(element, 1);
+    ASSERT_TRUE(circular_buffer_is_empty(cb));
+}
+
 TEST_F(CircularBufferTest, FullBufferTest) {
     circular_buffer_add(cb, 1);
     circular_buffer_add(cb, 2);

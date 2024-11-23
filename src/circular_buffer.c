@@ -78,7 +78,7 @@ bool circular_buffer_remove(CircularBuffer* cb, int* element) {
 
     pthread_mutex_lock(&cb->mutex);
 
-    while (!circular_buffer_is_empty(cb) && cb->running) {
+    while (circular_buffer_is_empty(cb) && cb->running) {
         pthread_cond_wait(&cb->not_empty, &cb->mutex);
     }
 
