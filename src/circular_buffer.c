@@ -7,14 +7,15 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 CircularBuffer* circular_buffer_init(size_t size) {
-    CircularBuffer* cb = malloc(sizeof(CircularBuffer));
+    CircularBuffer* cb = (CircularBuffer*)malloc(sizeof(CircularBuffer));
     if (!cb) {
         return NULL;
     }
 
-    cb->buffer = malloc(size * sizeof(int));
+    cb->buffer = (int*)malloc(size * sizeof(int));
     if (!cb->buffer) {
         free(cb);
         return NULL;
@@ -78,5 +79,42 @@ void circular_buffer_free(CircularBuffer* cb) {
         free(cb->buffer);
         free(cb);
     }
+}
+
+double calculate_ema(const CircularBuffer* cb, double alpha) {
+    if (!cb || circular_buffer_is_empty(cb)) {
+        return 0.0;
+    }
+
+    double ema = cb->buffer[cb->tail];
+    size_t current = (cb->tail + 1) % cb->size;
+
+    while (current != cb->head) {
+        ema = alpha * cb->buffer[current] + (1 - alpha) * ema;
+        current = (current + 1) % cb->size;
+        if (current == cb->head) break;
+    }
+
+    return ema;
+}
+
+// Function to visualize the circular buffer
+void visualizeCircularBuffer(const CircularBuffer* cb) {
+    printf("Circular Buffer Visualization:\n");
+    for (size_t i = 0; i < cb->size; ++i) {
+        if (i == cb->head && i == cb->tail && !cb->full) {
+            printf("[H,T] ");
+        } else if (i == cb->head) {
+            printf("[H] ");
+        } else if (i == cb->tail) {
+            printf("[T] ");
+        } else {
+            printf("[ ] ");
+        }
+
+        printf("%d ", cb->buffer[i]);
+    }
+    printf("\nBuffer Full: %s\n", cb->full ? "Yes" : "No");
+    printf("Head: %zu, Tail: %zu\n\n", cb->head, cb->tail);
 }
 

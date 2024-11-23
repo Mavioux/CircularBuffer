@@ -6,6 +6,10 @@
 #ifndef CIRCULAR_BUFFER_H
 #define CIRCULAR_BUFFER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -34,5 +38,15 @@ bool circular_buffer_is_empty(const CircularBuffer* cb);
 
 // Free buffer memory
 void circular_buffer_free(CircularBuffer* cb);
+
+// Calculate EMA
+double calculate_ema(const CircularBuffer* cb, double alpha);
+
+// Function to visualize the circular buffer
+void visualizeCircularBuffer(const CircularBuffer* cb);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // CIRCULAR_BUFFER_H
