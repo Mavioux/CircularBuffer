@@ -1,43 +1,59 @@
-# Makefile
-
 CC := gcc
+CXX := g++
 CFLAGS := -Wall -Wextra -g
+CXXFLAGS := -Wall -Wextra -g
 LDFLAGS :=
 
 ifeq ($(OS),Windows_NT)
-    RM := del /Q
+    RM := del /Q /S
+    MKDIR := mkdir
     TARGET := heart_monitor.exe
+    TEST_TARGET := test_runner.exe
 else
-    RM := rm -f
+    RM := rm -rf
+    MKDIR := mkdir -p
     TARGET := heart_monitor
+    TEST_TARGET := test_runner
 endif
 
-# Source directory
+# Source and object directories
 SRCDIR := src
-# Object directory (optional, can be the same as SRCDIR or separate)
 OBJDIR := obj
+TESTDIR := unittest
 
-SRCDIR := src
-# List of source files
+# Include directory
+INCLUDES := -I$(SRCDIR)
+
+# Source files for main application
 SRCS := $(wildcard $(SRCDIR)/*.c)
-# Replace source file extensions with .o and store in OBJDIR
-OBJS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRCS))
+OBJS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/$(SRCDIR)/%.o, $(SRCS))
 
-.PHONY: all clean
+# Source files for tests
+TEST_SRCS := $(SRCDIR)/$(TESTDIR)/circular_buffer_test.cpp
+# We only need the circular_buffer object file for the test
+EXTRA_TEST_OBJS := $(OBJDIR)/$(SRCDIR)/circular_buffer.o
+
+.PHONY: all clean test
 
 # Default target
 all: $(TARGET)
 
-# Link the final executable
+# Build the main executable
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
-# Compile source files into object files
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(OBJDIR) # Ensure OBJDIR exists
-	$(CC) $(CFLAGS) -c $< -o $@
+# Build the test executable
+test: $(TEST_TARGET)
+
+$(TEST_TARGET): $(EXTRA_TEST_OBJS)
+	$(CXX) $(TEST_SRCS) $(EXTRA_TEST_OBJS) -o $(TEST_TARGET) -lgtest -lgtest_main -pthread $(INCLUDES)
+
+# Compile source files into object files (for main application)
+$(OBJDIR)/$(SRCDIR)/%.o: $(SRCDIR)/%.c
+	@$(MKDIR) $(dir $@)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Clean build artifacts
 clean:
-	$(RM) $(OBJS) $(TARGET)
-	@if [ -d $(OBJDIR) ]; then rmdir $(OBJDIR); fi
+	$(RM) $(OBJDIR)
+	$(RM) $(TARGET) $(TEST_TARGET)
