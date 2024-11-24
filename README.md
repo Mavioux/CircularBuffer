@@ -90,7 +90,7 @@ Output:
 Starting producer-consumer simulation...
 Press Ctrl+C to exit
 
-[Consumer] Running producer
+[Producer] Running producer
 [Producer] Produced: 120 BPM
 Circular Buffer Visualization:
 [ ] 48 [ ] 109 [ ] 171 [ ] 52 [ ] 168 [ ] 155 [ ] 166 [ ] 122 [ ] 120 [H] 129 

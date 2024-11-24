@@ -25,7 +25,7 @@ void* producer(void* arg) {
     CircularBuffer* cb = (CircularBuffer*)arg;
 
     while (1) {
-        printf("[Consumer] Running producer\n");
+        printf("[Producer] Running producer\n");
         int heart_rate = generate_heart_rate();
         if (circular_buffer_add(cb, heart_rate)) {
             printf("[Producer] Produced: %d BPM\n", heart_rate);
