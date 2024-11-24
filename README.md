@@ -134,5 +134,8 @@ The unit tests cover:
 - Full/empty state checking
 - EMA calculation
 
+## Disclaimer
+Makefile has only been verified for use in Unix environments, not verified on a Windows environment.
+
 ## License
 This project is provided as-is under the MIT license.
